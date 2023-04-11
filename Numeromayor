@@ -1,0 +1,52 @@
+.data
+prompt1: .asciiz "Ingrese el primer número: "
+prompt2: .asciiz "Ingrese el segundo número: "
+prompt3: .asciiz "Ingrese el tercer número: "
+output:  .asciiz "El número más grande es: "
+# Definir la sección de código
+.text
+main:
+    # Mostrar prompt1 y leer el primer número
+    li $v0, 4         # Cargar el valor 4 en $v0 para indicar que se mostrará un mensaje en pantalla
+    la $a0, prompt1   # Cargar la dirección del mensaje en $a0
+    syscall           # Realizar la llamada al sistema para mostrar el mensaje
+    li $v0, 5         # Cargar el valor 5 en $v0 para indicar que se leerá un número entero
+    syscall           # Realizar la llamada al sistema para leer el número
+    move $t0, $v0     # Mover el valor leído a $t0
+
+    # Mostrar prompt2 y leer el segundo número
+    li $v0, 4         # Cargar el valor 4 en $v0 para indicar que se mostrará un mensaje en pantalla
+    la $a0, prompt2   # Cargar la dirección del mensaje en $a0
+    syscall           # Realizar la llamada al sistema para mostrar el mensaje
+    li $v0, 5         # Cargar el valor 5 en $v0 para indicar que se leerá un número entero
+    syscall           # Realizar la llamada al sistema para leer el número
+    move $t1, $v0     # Mover el valor leído a $t1
+
+    # Mostrar prompt3 y leer el tercer número
+    li $v0, 4         # Cargar el valor 4 en $v0 para indicar que se mostrará un mensaje en pantalla
+    la $a0, prompt3   # Cargar la dirección del mensaje en $a0
+    syscall           # Realizar la llamada al sistema para mostrar el mensaje
+    li $v0, 5         # Cargar el valor 5 en $v0 para indicar que se leerá un número entero
+    syscall           # Realizar la llamada al sistema para leer el número
+    move $t2, $v0     # Mover el valor leído a $t2
+
+    # Comparar los números
+    move $t3, $t0     # Asignar el primer número a $t3
+    ble $t1, $t3, check2  # Saltar a "check2" si el segundo número no es mayor que el primero
+    move $t3, $t1     # Asignar el segundo número a $t3 si es mayor
+check2:
+    ble $t2, $t3, print   # Saltar a "print" si el tercer número no es mayor que los dos primeros
+    move $t3, $t2     # Asignar el tercer número a $t3 si es mayor
+
+
+print:
+    # Mostrar el número más grande
+    li $v0, 4         # Cargar el valor 4 en $v0 para indicar que se mostrará un mensaje en pantalla
+    la $a0, output    # Cargar la dirección del mensaje en $a0
+    syscall           # Realizar la llamada al sistema para mostrar el mensaje
+    move $a0, $t3     # Mover el número más grande a $a0
+    li $v0, 1         # Cargar el valor 1 en $v0 para indicar que se mostrará un entero en pantalla
+    syscall           # Realizar la llamada al sistema para mostrar el número
+    li $v0, 10        # Cargar el valor 10 en $v0 para indicar que se finalizará el programa
+    syscall           # Realizar la llamada al sistema para finalizar el programa
+

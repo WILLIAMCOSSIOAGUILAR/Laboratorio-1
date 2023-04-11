@@ -1,0 +1,82 @@
+# programa en MARS para encontrar el número menor entre tres número
+.data
+# Declaración de variables de datos
+msg1: .asciiz "Ingrese el primer número: " # mensaje para el primer número
+msg2: .asciiz "Ingrese el segundo número: " # mensaje para el segundo número
+msg3: .asciiz "Ingrese el tercer número: " # mensaje para el tercer número
+msg4: .asciiz "\nEl número menor es: " # mensaje para imprimir el número menor
+num1: .word 0 # variable para almacenar el primer número
+num2: .word 0 # variable para almacenar el segundo número
+num3: .word 0 # variable para almacenar el tercer número
+menor: .word 0 # variable para almacenar el número menor encontrado
+
+.text
+.globl main
+
+# Inicio del programa principal
+main:
+    # Imprime el mensaje para ingresar el primer número y lo lee desde el teclado
+    li $v0, 4 # carga el valor 4 en el registro $v0 para indicar que se va a imprimir una cadena
+    la $a0, msg1 # carga la dirección del mensaje 1 en el registro $a0
+    syscall # llama al sistema para imprimir el mensaje
+    li $v0, 5 # carga el valor 5 en el registro $v0 para indicar que se va a leer un número entero
+    syscall # llama al sistema para leer el número entero ingresado por el usuario
+    sw $v0, num1 # almacena el valor leído en la dirección de memoria de la variable num1
+
+    # Imprime el mensaje para ingresar el segundo número y lo lee desde el teclado
+    li $v0, 4 # carga el valor 4 en el registro $v0 para indicar que se va a imprimir una cadena
+    la $a0, msg2 # carga la dirección del mensaje 2 en el registro $a0
+    syscall # llama al sistema para imprimir el mensaje
+    li $v0, 5 # carga el valor 5 en el registro $v0 para indicar que se va a leer un número entero
+    syscall # llama al sistema para leer el número entero ingresado por el usuario
+    sw $v0, num2 # almacena el valor leído en la dirección de memoria de la variable num2
+
+    # Imprime el mensaje para ingresar el tercer número y lo lee desde el teclado
+    li $v0, 4 # carga el valor 4 en el registro $v0 para indicar que se va a imprimir una cadena
+    la $a0, msg3 # carga la dirección del mensaje 3 en el registro $a0
+    syscall # llama al sistema para imprimir el mensaje
+    li $v0, 5 # carga el valor 5 en el registro $v0 para indicar que se va a leer un número entero
+    syscall # llama al sistema para leer el número entero ingresado por el usuario
+    sw $v0, num3 # almacena el valor leído en la dirección de memoria de la variable num3
+
+    # Inicializa $t0 con el valor de num1
+    lw $t0, num1
+    
+    
+# Llama a la funci�n check_t1_t2 para comparar num1 y num2
+    jal check_t1_t2
+
+# Llama a la funci�n check_t1_t3 para comparar el valor de $t0 (el n�mero menor hasta ahora) con num3
+    jal check_t1_t3
+
+# Almacena el n�mero menor en la direcci�n de memoria menor
+    sw $t0, menor
+
+# Imprime el mensaje "El número menor es: " y el número menor encontrado
+	li $v0, 4       # Cargar el valor 4 en $v0, que indica que la llamada al sistema es para imprimir una cadena
+	la $a0, msg4    # Cargar la dirección de la cadena msg4 en $a0, que es el primer argumento para la llamada al sistema
+	syscall         # Llamar al sistema para imprimir la cadena
+	lw $a0, menor   # Cargar el valor de la variable menor en $a0, que es el segundo argumento para la llamada al sistema
+	li $v0, 1       # Cargar el valor 1 en $v0, que indica que la llamada al sistema es para imprimir un entero
+	syscall         # Llamar al sistema para imprimir el entero
+
+# Termina el programa
+	li $v0, 10      # Cargar el valor 10 en $v0, que indica que la llamada al sistema es para terminar el programa
+	syscall         # Llamar al sistema para terminar el programa
+
+# Función para comparar num1 y num2
+# Si num1 es mayor que num2, $t0 = num2, de lo contrario $t0 = num1
+	check_t1_t2:
+	lw $t1, num2    # Cargar el valor de num2 en $t1
+	ble $t0, $t1, set_t0_t1 # Comparar $t0 con $t1. Si $t0 es menor o igual, saltar a set_t0_t1, de lo contrario continuar.
+	move $t0, $t1   # Si $t1 es menor, cargar $t1 en $t0
+	set_t0_t1:
+	jr $ra          # Devolver el control a la llamada anterior
+
+# Función para comparar el número menor actual ($t0) con num3
+# Si num3 es menor que $t0, $t0 = num3
+	check_t1_t3:
+	lw $t1, num3    # Cargar el valor de num3 en $t1
+	ble $t0, $t1, set_t0_t1 # Comparar $t0 con $t1. Si $t0 es menor o igual, saltar a set_t0_t1, de lo contrario continuar.
+	move $t0, $t1   # Si $t1 es menor, cargar $t1 en $t0
+	jr $ra          # Devolver el control a la llamada anterior

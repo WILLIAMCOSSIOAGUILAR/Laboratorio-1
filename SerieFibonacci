@@ -1,0 +1,81 @@
+.data
+    prompt1: .asciiz "Ingrese un numero entero positivo para imprimir los n Numeros de la serie FiBonacci: "
+    prompt2: .asciiz "La serie de Fibonacci para n = "
+    newline: .asciiz "\n"
+    
+.text
+    main:
+	 # Borra la pantalla
+    	li $v0, 33
+    	li $a0, 12
+    	li $a1, 0
+    	syscall
+    	
+        # Imprimir el prompt1
+        li $v0, 4
+        la $a0, prompt1
+        syscall
+        
+        # Leer el numero ingresado por el usuario
+        li $v0, 5
+        syscall
+        move $t0, $v0   # Guardar el numero ingresado en $t0
+
+        
+        # Inicializar la serie de Fibonacci
+        li $t1, 0       # F(0) = 0
+        li $t2, 1       # F(1) = 1
+        li $t3, 2       # i = 2
+        
+        # Imprimir el prompt2 con el valor de n
+        li $v0, 4
+        la $a0, prompt2
+        syscall
+        
+        
+        move $a0, $t0   # Pasar el valor de n como argumento para imprimir
+        li $v0, 1
+        syscall
+
+        li $v0, 4
+        la $a0, newline       # Imprimir un salto de l�nea
+        syscall
+        
+    	li $v0, 1
+    	li $a0, 0
+    	syscall        
+
+            li $v0, 4
+            la $a0, newline       # Imprimir un salto de l�nea
+            syscall
+
+    	li $v0, 1
+    	li $a0, 1
+    	syscall        
+
+            li $v0, 4
+            la $a0, newline       # Imprimir un salto de l�nea
+            syscall
+
+                                                
+        # Imprimir la serie de Fibonacci
+        loop:
+            blt $t3, $t0, body    # Saltar a la etiqueta body si i < n
+            j exit                # Si i >= n, salir del loop
+        body:
+            add $t4, $t1, $t2     # Calcular F(i) = F(i-1) + F(i-2)
+            move $t1, $t2         # Actualizar F(i-2) = F(i-1)
+            move $t2, $t4         # Actualizar F(i-1) = F(i)
+            li $v0, 1
+            move $a0, $t4         # Imprimir F(i)
+            syscall
+            li $v0, 4
+            la $a0, newline       # Imprimir un salto de l�nea
+            syscall
+            addi $t3, $t3, 1      # Incrementar i en 1
+            j loop                # Volver al inicio del loop
+        
+        # Salir del programa
+        exit:
+            li $v0, 10
+            syscall
